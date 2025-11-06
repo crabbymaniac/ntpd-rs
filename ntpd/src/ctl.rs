@@ -172,7 +172,10 @@ const VERSION: &str = env!("CARGO_PKG_VERSION");
 pub fn main() -> std::io::Result<ExitCode> {
     #[cfg(target_os = "linux")]
     {
-        use crate::security::seccomp_init;
+        use crate::security::{drop_caps, seccomp_init};
+
+        // Drop capablities
+        drop_caps(None);
 
         // Allowed syscalls
         let syscalls = vec![
