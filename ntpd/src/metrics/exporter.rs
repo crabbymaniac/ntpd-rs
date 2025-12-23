@@ -111,6 +111,16 @@ impl NtpMetricsExporterOptions {
 }
 
 pub fn main() -> Result<(), Box<dyn std::error::Error>> {
+    #[cfg(target_os = "linux")]
+    {
+        use crate::security::{drop_caps, seccomp_init};
+
+        // Drop capablities
+        drop_caps(None);
+
+        // Initialize seccomp
+        seccomp_init(vec!["accept4"]);
+    }
     let options = NtpMetricsExporterOptions::try_parse_from(std::env::args())?;
     match options.action {
         MetricsAction::Help => {
